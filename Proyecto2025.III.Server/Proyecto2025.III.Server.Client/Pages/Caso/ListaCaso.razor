@@ -1,0 +1,102 @@
+﻿@page "/casos"
+@rendermode InteractiveAuto
+@using Proyecto2025.III.Server.Client.Shared
+@using Proyecto2025.III.Shared.DTO
+@using Proyecto2025.III.Servicio.ServiciosHttp
+@inject IHttpServicio http
+@inject NavigationManager navHttp
+
+<h3>Lista de Casos</h3>
+
+<table>
+    <tr>
+        <th>Casos</th>
+    </tr>
+
+    @if (casos == null)
+    {
+        <p>Buscando...</p>
+    }
+    else if (casos.Count == 0)
+    {
+        <p>No hay casos disponibles.</p>
+    }
+    else
+    {
+        @foreach (var caso in casos)
+        {
+            <tr>
+                <td>@caso.DatosCaso</td>
+                <td>
+                    <a class="btn btn-primary"
+                           href="/caso/editar/@caso.Id">
+                        Editar
+                    </a>
+                </td>
+                <td>
+                    <button class="btn btn-danger"
+                            @onclick="() => Eliminar(caso)">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+        }
+    }
+</table>
+
+<p>@Mensaje</p>
+
+<Confirmacion @ref="confirmacion"
+              Titulo="Cuidado"
+              textOk="Aceptar"
+              textCancelar="No borrar"
+              onConfirm="Borrar"
+              onCancel="Cancelar">
+    <p>Está por borrar un caso.</p>
+</Confirmacion>
+
+@code {
+    List<CasoListadoDTO> casos;
+    string Mensaje = "";
+    Confirmacion confirmacion;
+    CasoListadoDTO casoSeleccionado = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LeerCasos();
+    }
+
+    private async Task LeerCasos()
+    {
+        var resp = await http.Get<List<CasoListadoDTO>>("api/caso/lista");
+
+        if (!resp.Error)
+            casos = resp.Respuesta;
+        else
+            Mensaje = resp.ObtenerError();
+    }
+
+    private async Task Borrar()
+    {
+        var resp = await http.Delete($"api/caso/{casoSeleccionado.Id}");
+
+        if (resp.Error)
+            Mensaje = resp.ObtenerError();
+
+        casoSeleccionado = null;
+        confirmacion.Ocultar();
+        await LeerCasos();
+    }
+
+    private void Eliminar(CasoListadoDTO caso)
+    {
+        casoSeleccionado = caso;
+        confirmacion.Ver();
+    }
+
+    private void Cancelar()
+    {
+        confirmacion.Ocultar();
+        casoSeleccionado = null;
+    }
+}

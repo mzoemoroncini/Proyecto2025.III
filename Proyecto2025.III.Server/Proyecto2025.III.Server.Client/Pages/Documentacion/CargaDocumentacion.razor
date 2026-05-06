@@ -1,0 +1,152 @@
+﻿@page "/documentacion"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+
+@using Proyecto2025.III.Shared.DTO
+@using Proyecto2025.III.Servicio.ServiciosHttp
+
+@inject IHttpServicio http
+@inject NavigationManager navHttp
+
+<h3>Cargar Documentación</h3>
+
+<EditForm Model="docs" OnValidSubmit="Grabar">
+    <DataAnnotationsValidator />
+
+    <div class="form-group mb-3">
+        <label>Descripción</label>
+        <InputText class="form-control" @bind-Value="docs.Descripcion" />
+        <ValidationMessage For="@(() => docs.Descripcion)" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Archivo URL</label>
+        <InputText class="form-control" @bind-Value="docs.ArchivoUrl" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Caso</label>
+        <select class="form-select" @bind="docs.CasoId">
+            <option value="0">-- Seleccione un Caso --</option>
+            @foreach (var c in casos)
+            {
+                <option value="@c.Id">@c.Id - @c.NumeroExpediente</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group mb-3">
+        <label>Tipo Documentación</label>
+        <select class="form-select" @bind="docs.TipoDocumentacionId">
+            <option value="0">-- Seleccione un Tipo --</option>
+            @foreach (var t in tipos)
+            {
+                <option value="@t.Id">@t.Nombre</option>
+            }
+        </select>
+    </div>
+
+
+
+    <button class="btn btn-primary" type="submit" disabled="@cargando">
+        @(cargando ? "Guardando..." : "Guardar")
+    </button>
+
+    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">
+        Cancelar
+    </button>
+</EditForm>
+
+<br />
+
+@if (!string.IsNullOrEmpty(Mensaje))
+{
+    <div class="alert @(Mensaje.Contains("❌") ? "alert-danger" : "alert-success")">
+        @Mensaje
+    </div>
+}
+
+@code {
+    List<CasoListadoDTO> casos = new();
+    List<TipoDocumentacionListadoDTO> tipos = new();
+    DocumentacionDTO docs = new DocumentacionDTO();
+
+    string Mensaje = "";
+    bool cargando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LeerCasos();
+        await LeerTipos();
+    }
+
+
+    private async Task LeerCasos()
+    {
+        var resp = await http.Get<List<CasoListadoDTO>>("api/caso/lista");
+
+        if (!resp.Error && resp.Respuesta != null)
+            casos = resp.Respuesta;
+        else
+            Mensaje = resp.ObtenerError();
+    }
+
+
+    private async Task LeerTipos()
+    {
+        var resp = await http.Get<List<TipoDocumentacionListadoDTO>>("api/tipo-documentacion/lista");
+
+        if (!resp.Error && resp.Respuesta != null)
+            tipos = resp.Respuesta;
+        else
+            Mensaje = resp.ObtenerError();
+    }
+
+
+    private async Task Grabar()
+    {
+        Mensaje = "";
+
+
+        if (docs.CasoId == 0 || docs.TipoDocumentacionId == 0)
+        {
+            Mensaje = "⚠️ Debe seleccionar un caso y un tipo de documentación.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(docs.Descripcion))
+        {
+            Mensaje = "⚠️ La descripción es obligatoria.";
+            return;
+        }
+
+        try
+        {
+            cargando = true;
+
+            var resp = await http.Post<DocumentacionDTO, int>("api/documentacion", docs);
+
+            if (!resp.Error)
+            {
+                Mensaje = "✅ Documentación cargada correctamente.";
+
+
+                docs = new DocumentacionDTO();
+            }
+            else
+            {
+                Mensaje = $"❌ {resp.ObtenerError()}";
+            }
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+
+    private void Cancelar()
+    {
+        docs = new DocumentacionDTO();
+        Mensaje = "Operación cancelada.";
+    }
+}
