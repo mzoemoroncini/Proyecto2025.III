@@ -1,66 +1,116 @@
 ﻿@page "/casos"
 @rendermode InteractiveAuto
+
 @using Microsoft.AspNetCore.Authorization
 @using Proyecto2025.III.Server.Client.Shared
 @using Proyecto2025.III.Shared.DTO
 @using Proyecto2025.III.Servicio.ServiciosHttp
+
 @attribute [Authorize]
+
 @inject IHttpServicio http
 @inject NavigationManager navHttp
 
-<h3>Lista de Casos</h3>
+<div class="casos-container">
 
-<table>
-    <tr>
-        <th>Casos</th>
-    </tr>
+    <div class="casos-header">
+
+        <h1>⚖️ Gestión de Casos</h1>
+
+        <a class="btn btn-nuevo"
+               href="/caso/crear">
+            + Nuevo Caso
+        </a>
+
+    </div>
 
     @if (casos == null)
     {
-        <p>Buscando...</p>
+        <div class="loading-box">
+            <p>Cargando casos...</p>
+        </div>
     }
     else if (casos.Count == 0)
     {
-        <p>No hay casos disponibles.</p>
+        <div class="empty-box">
+            <h3>No hay casos cargados</h3>
+            <p>Comenzá registrando un nuevo expediente.</p>
+        </div>
     }
     else
     {
-        @foreach (var caso in casos)
-        {
-            <tr>
-                <td>@caso.DatosCaso</td>
-                <td>
-                    <a class="btn btn-primary"
-                           href="/caso/editar/@caso.Id">
-                        Editar
-                    </a>
-                </td>
-                <td>
-                    <button class="btn btn-danger"
-                            @onclick="() => Eliminar(caso)">
-                        Eliminar
-                    </button>
-                </td>
-            </tr>
-        }
-    }
-</table>
+        <div class="tabla-container">
 
-<p>@Mensaje</p>
+            <table class="tabla-casos">
+
+                <thead>
+                    <tr>
+                        <th>Casos</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var caso in casos)
+                    {
+                        <tr>
+
+                            <td class="datos-caso">
+                                @caso.DatosCaso
+                            </td>
+
+                            <td class="acciones">
+
+                                <a class="btn-editar"
+                                       href="/caso/editar/@caso.Id">
+                                    Editar
+                                </a>
+
+                                <button class="btn-eliminar"
+                                        @onclick="() => Eliminar(caso)">
+                                    Eliminar
+                                </button>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Mensaje))
+    {
+        <div class="mensaje">
+            @Mensaje
+        </div>
+    }
+
+</div>
 
 <Confirmacion @ref="confirmacion"
-              Titulo="Cuidado"
-              textOk="Aceptar"
-              textCancelar="No borrar"
+              Titulo="Eliminar Caso"
+              textOk="Eliminar"
+              textCancelar="Cancelar"
               onConfirm="Borrar"
               onCancel="Cancelar">
-    <p>Está por borrar un caso.</p>
+
+    <p>¿Seguro que desea eliminar este caso?</p>
+
 </Confirmacion>
 
 @code {
+
     List<CasoListadoDTO> casos;
     string Mensaje = "";
+
     Confirmacion confirmacion;
+
     CasoListadoDTO casoSeleccionado = null;
 
     protected override async Task OnInitializedAsync()
@@ -86,19 +136,23 @@
             Mensaje = resp.ObtenerError();
 
         casoSeleccionado = null;
+
         confirmacion.Ocultar();
+
         await LeerCasos();
     }
 
     private void Eliminar(CasoListadoDTO caso)
     {
         casoSeleccionado = caso;
+
         confirmacion.Ver();
     }
 
     private void Cancelar()
     {
         confirmacion.Ocultar();
+
         casoSeleccionado = null;
     }
 }

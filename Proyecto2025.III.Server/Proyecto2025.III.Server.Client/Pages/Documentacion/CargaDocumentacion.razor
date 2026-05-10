@@ -9,104 +9,156 @@
 @inject IHttpServicio http
 @inject NavigationManager navHttp
 
-<h3>Cargar Documentación</h3>
+<div class="docs-container">
 
-<EditForm Model="docs" OnValidSubmit="Grabar" FormName="CargarDocumentacionForm">
-    <DataAnnotationsValidator />
+    <h1 class="docs-title">
+        📁 Gestión de Documentación
+    </h1>
 
-    <div class="form-group mb-3">
-        <label>Descripción</label>
-        <InputText class="form-control" @bind-Value="docs.Descripcion" />
-        <ValidationMessage For="@(() => docs.Descripcion)" />
+    <div class="docs-card">
+
+        <EditForm Model="docs"
+                  OnValidSubmit="Grabar"
+                  FormName="CargarDocumentacionForm">
+
+            <DataAnnotationsValidator />
+
+            <div class="mb-4">
+
+                <label>Descripción</label>
+
+                <InputText class="input-custom"
+                           @bind-Value="docs.Descripcion" />
+
+                <ValidationMessage For="@(() => docs.Descripcion)" />
+
+            </div>
+
+            <div class="mb-4">
+
+                <label>Archivo URL</label>
+
+                <InputText class="input-custom"
+                           @bind-Value="docs.ArchivoUrl" />
+
+            </div>
+
+            <div class="mb-4">
+
+                <label>Caso</label>
+
+                <InputSelect class="input-custom"
+                             @bind-Value="docs.CasoId">
+
+                    <option value="0">
+                        -- Seleccione un Caso --
+                    </option>
+
+                    @foreach (var c in casos)
+                    {
+                        <option value="@c.Id">
+                            @c.Id - @c.NumeroExpediente
+                        </option>
+                    }
+
+                </InputSelect>
+
+            </div>
+
+            <div class="mb-4">
+
+                <label>Tipo Documentación</label>
+
+                <InputSelect class="input-custom"
+                             @bind-Value="docs.TipoDocumentacionId">
+
+                    <option value="0">
+                        -- Seleccione un Tipo --
+                    </option>
+
+                    @foreach (var t in tipos)
+                    {
+                        <option value="@t.Id">
+                            @t.Nombre
+                        </option>
+                    }
+
+                </InputSelect>
+
+            </div>
+
+            <button class="btn-guardar"
+                    type="submit"
+                    disabled="@cargando">
+
+                @(cargando ? "Guardando..." : "Guardar")
+
+            </button>
+
+            <button type="button"
+                    class="btn-cancelar"
+                    @onclick="Cancelar">
+
+                Cancelar
+
+            </button>
+
+        </EditForm>
+
     </div>
 
-    <div class="form-group mb-3">
-        <label>Archivo URL</label>
-        <InputText class="form-control" @bind-Value="docs.ArchivoUrl" />
+    @if (!string.IsNullOrEmpty(Mensaje))
+    {
+        <div class="mensaje-box">
+            @Mensaje
+        </div>
+    }
+
+    <div class="docs-card">
+
+        <h3>📄 Documentación cargada</h3>
+
+        @if (documentos.Count == 0)
+        {
+            <p>No hay documentación registrada.</p>
+        }
+        else
+        {
+            <table class="tabla-documentos">
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Documento</th>
+                        <th>Archivo URL</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @foreach (var d in documentos)
+                    {
+                        <tr>
+
+                            <td>@d.Id</td>
+
+                            <td>@d.DatosDocumento</td>
+
+                            <td>@d.ArchivoUrl</td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+        }
+
     </div>
 
-    <div class="form-group mb-3">
-        <label>Caso</label>
-       <InputSelect class="form-select" @bind-Value="docs.CasoId">
-            <option value="0">-- Seleccione un Caso --</option>
-
-            @foreach (var c in casos)
-            {
-                <option value="@c.Id">
-                     @c.Id - @c.NumeroExpediente
-                </option>
-            }
-        </InputSelect>
-    </div>
-
-    <div class="form-group mb-3">
-        <label>Tipo Documentación</label>
-
-<InputSelect class="form-select" @bind-Value="docs.TipoDocumentacionId">           
-    <option value="0">-- Seleccione un Tipo --</option>
-
-            @foreach (var t in tipos)
-            {
-                <option value="@t.Id">
-                    @t.Nombre
-                </option>
-            }
-        </InputSelect>
-    </div>
-
-    <button class="btn btn-primary" type="submit" disabled="@cargando">
-        @(cargando ? "Guardando..." : "Guardar")
-    </button>
-
-    <button type="button"
-            class="btn btn-secondary ms-2"
-            @onclick="Cancelar">
-        Cancelar
-    </button>
-</EditForm>
-
-<br />
-
-@if (!string.IsNullOrEmpty(Mensaje))
-{
-    <div class="alert @(Mensaje.Contains("❌") ? "alert-danger" : "alert-success")">
-        @Mensaje
-    </div>
-}
-
-<hr />
-
-<h4>Documentación cargada</h4>
-
-@if (documentos.Count == 0)
-{
-    <div class="alert alert-warning">
-        No hay documentación registrada.
-    </div>
-}
-else
-{
-    <table class="table table-striped table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Documento</th>
-                <th>Archivo URL</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            @foreach (var d in documentos)
-            {
-                <tr>
-                    <td>@d.Id</td>
-                    <td>@d.DatosDocumento</td>
-                    <td>@d.ArchivoUrl</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+</div>
 
 @code {
 

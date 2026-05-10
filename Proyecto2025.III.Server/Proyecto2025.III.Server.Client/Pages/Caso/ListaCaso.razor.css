@@ -1,0 +1,99 @@
+﻿.casos-container {
+    padding: 40px;
+    color: white;
+    min-height: 100vh;
+    background: linear-gradient( 135deg, #070B1A, #140A2E, #2A004D);
+    font-family: 'Segoe UI';
+}
+
+.casos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+    .casos-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+    }
+
+.btn-nuevo {
+    background: linear-gradient(135deg,#ff00aa,#7b2cff);
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: .2s;
+}
+
+    .btn-nuevo:hover {
+        transform: scale(1.05);
+        color: white;
+    }
+
+.tabla-container {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+}
+
+.tabla-casos {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .tabla-casos thead {
+        background: rgba(255,255,255,0.08);
+    }
+
+    .tabla-casos th {
+        padding: 20px;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .tabla-casos td {
+        padding: 20px;
+        border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .tabla-casos tr:hover {
+        background: rgba(255,255,255,0.03);
+    }
+
+.acciones {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-editar {
+    background: #3b82f6;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-eliminar {
+    background: #ef4444;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.loading-box,
+.empty-box,
+.mensaje {
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+    border-radius: 18px;
+    text-align: center;
+}

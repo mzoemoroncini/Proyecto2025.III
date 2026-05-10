@@ -1,0 +1,89 @@
+﻿.docs-container {
+    min-height: 100vh;
+    padding: 40px;
+    background: linear-gradient( 135deg, #070B1A, #140A2E, #2A004D);
+    color: white;
+    font-family: 'Segoe UI';
+}
+
+.docs-title {
+    font-size: 2.3rem;
+    font-weight: 700;
+    margin-bottom: 35px;
+}
+
+.docs-card {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 24px;
+    padding: 30px;
+    backdrop-filter: blur(14px);
+    margin-bottom: 30px;
+}
+
+.input-custom {
+    width: 100%;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 14px;
+    color: white;
+    outline: none;
+}
+
+    .input-custom:focus {
+        border-color: #d946ef;
+        box-shadow: 0 0 15px rgba(217,70,239,.35);
+    }
+
+label {
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.btn-guardar {
+    background: linear-gradient( 135deg, #ff00aa, #7b2cff);
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.btn-cancelar {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.1);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.tabla-documentos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+    .tabla-documentos th {
+        background: rgba(255,255,255,.08);
+        padding: 16px;
+        text-align: left;
+    }
+
+    .tabla-documentos td {
+        padding: 16px;
+        border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    .tabla-documentos tr:hover {
+        background: rgba(255,255,255,.03);
+    }
+
+.mensaje-box {
+    background: rgba(255,255,255,.05);
+    border-radius: 16px;
+    padding: 18px;
+    margin-top: 20px;
+}
