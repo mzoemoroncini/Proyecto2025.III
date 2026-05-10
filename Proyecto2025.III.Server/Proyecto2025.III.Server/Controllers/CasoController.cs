@@ -8,7 +8,7 @@ using Proyecto2025.III.Shared.ENUM;
 namespace Proyecto2025.Server.Controllers
 {
     [ApiController]
-    [Route("api/casos")]
+    [Route("api/caso")]
     public class CasoController : ControllerBase
     {
         private readonly ICasoRepositorio repositorio;
@@ -62,7 +62,7 @@ namespace Proyecto2025.Server.Controllers
         }
 
         // GET: api/caso/listacaso
-        [HttpGet("listacaso")]
+        [HttpGet("lista")]
         public async Task<ActionResult<List<CasoListadoDTO>>> ListaCaso()
         {
             var lista = await repositorio.SelectListaCaso();

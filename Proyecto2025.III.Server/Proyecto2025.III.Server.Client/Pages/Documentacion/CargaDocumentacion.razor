@@ -1,6 +1,8 @@
 ﻿@page "/documentacion"
-@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@rendermode InteractiveAuto
+@attribute [Authorize]
 
+@using Microsoft.AspNetCore.Authorization
 @using Proyecto2025.III.Shared.DTO
 @using Proyecto2025.III.Servicio.ServiciosHttp
 
@@ -9,7 +11,7 @@
 
 <h3>Cargar Documentación</h3>
 
-<EditForm Model="docs" OnValidSubmit="Grabar">
+<EditForm Model="docs" OnValidSubmit="Grabar" FormName="CargarDocumentacionForm">
     <DataAnnotationsValidator />
 
     <div class="form-group mb-3">
@@ -25,33 +27,40 @@
 
     <div class="form-group mb-3">
         <label>Caso</label>
-        <select class="form-select" @bind="docs.CasoId">
+       <InputSelect class="form-select" @bind-Value="docs.CasoId">
             <option value="0">-- Seleccione un Caso --</option>
+
             @foreach (var c in casos)
             {
-                <option value="@c.Id">@c.Id - @c.NumeroExpediente</option>
+                <option value="@c.Id">
+                     @c.Id - @c.NumeroExpediente
+                </option>
             }
-        </select>
+        </InputSelect>
     </div>
 
     <div class="form-group mb-3">
         <label>Tipo Documentación</label>
-        <select class="form-select" @bind="docs.TipoDocumentacionId">
-            <option value="0">-- Seleccione un Tipo --</option>
+
+<InputSelect class="form-select" @bind-Value="docs.TipoDocumentacionId">           
+    <option value="0">-- Seleccione un Tipo --</option>
+
             @foreach (var t in tipos)
             {
-                <option value="@t.Id">@t.Nombre</option>
+                <option value="@t.Id">
+                    @t.Nombre
+                </option>
             }
-        </select>
+        </InputSelect>
     </div>
-
-
 
     <button class="btn btn-primary" type="submit" disabled="@cargando">
         @(cargando ? "Guardando..." : "Guardar")
     </button>
 
-    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancelar">
+    <button type="button"
+            class="btn btn-secondary ms-2"
+            @onclick="Cancelar">
         Cancelar
     </button>
 </EditForm>
@@ -65,47 +74,108 @@
     </div>
 }
 
+<hr />
+
+<h4>Documentación cargada</h4>
+
+@if (documentos.Count == 0)
+{
+    <div class="alert alert-warning">
+        No hay documentación registrada.
+    </div>
+}
+else
+{
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Documento</th>
+                <th>Archivo URL</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var d in documentos)
+            {
+                <tr>
+                    <td>@d.Id</td>
+                    <td>@d.DatosDocumento</td>
+                    <td>@d.ArchivoUrl</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 @code {
+
     List<CasoListadoDTO> casos = new();
+
     List<TipoDocumentacionListadoDTO> tipos = new();
-    DocumentacionDTO docs = new DocumentacionDTO();
+
+    List<DocumentacionListadoDTO> documentos = new();
+
+    DocumentacionDTO docs = new();
 
     string Mensaje = "";
+
     bool cargando = false;
 
     protected override async Task OnInitializedAsync()
     {
         await LeerCasos();
-        await LeerTipos();
-    }
 
+        await LeerTipos();
+
+        await LeerDocumentacion();
+    }
 
     private async Task LeerCasos()
     {
         var resp = await http.Get<List<CasoListadoDTO>>("api/caso/lista");
 
         if (!resp.Error && resp.Respuesta != null)
+        {
             casos = resp.Respuesta;
+        }
         else
+        {
             Mensaje = resp.ObtenerError();
+        }
     }
-
 
     private async Task LeerTipos()
     {
         var resp = await http.Get<List<TipoDocumentacionListadoDTO>>("api/tipo-documentacion/lista");
 
         if (!resp.Error && resp.Respuesta != null)
+        {
             tipos = resp.Respuesta;
+        }
         else
+        {
             Mensaje = resp.ObtenerError();
+        }
     }
 
+    private async Task LeerDocumentacion()
+    {
+        var resp = await http.Get<List<DocumentacionListadoDTO>>("api/documentacion/lista");
+
+        if (!resp.Error && resp.Respuesta != null)
+        {
+            documentos = resp.Respuesta;
+        }
+        else
+        {
+            documentos = new();
+        }
+    }
 
     private async Task Grabar()
     {
         Mensaje = "";
-
 
         if (docs.CasoId == 0 || docs.TipoDocumentacionId == 0)
         {
@@ -129,8 +199,9 @@
             {
                 Mensaje = "✅ Documentación cargada correctamente.";
 
-
                 docs = new DocumentacionDTO();
+
+                await LeerDocumentacion();
             }
             else
             {
@@ -143,10 +214,10 @@
         }
     }
 
-
     private void Cancelar()
     {
         docs = new DocumentacionDTO();
+
         Mensaje = "Operación cancelada.";
     }
 }

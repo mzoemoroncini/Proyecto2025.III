@@ -12,7 +12,7 @@ using Proyecto2025.III.BD.Datos.Entity;
 namespace Proyecto2025.III.BD.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20260505233130_Inicio")]
+    [Migration("20260508043057_Inicio")]
     partial class Inicio
     {
         /// <inheritdoc />

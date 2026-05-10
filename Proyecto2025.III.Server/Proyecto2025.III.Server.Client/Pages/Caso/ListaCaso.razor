@@ -1,8 +1,10 @@
 ﻿@page "/casos"
 @rendermode InteractiveAuto
+@using Microsoft.AspNetCore.Authorization
 @using Proyecto2025.III.Server.Client.Shared
 @using Proyecto2025.III.Shared.DTO
 @using Proyecto2025.III.Servicio.ServiciosHttp
+@attribute [Authorize]
 @inject IHttpServicio http
 @inject NavigationManager navHttp
 

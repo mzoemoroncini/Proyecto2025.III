@@ -18,10 +18,12 @@ namespace Proyecto2025.III.Repositorio.Repositorios
             var lista = await context.Casos
                                     .Select(p => new CasoListadoDTO
                                     {
+                                        Id = p.Id,
                                         NumeroExpediente = p.NumeroExpediente,
                                         DatosCaso = $"{p.Estado} - {p.Tipo} - {p.NumeroExpediente}"
                                     })
                                     .ToListAsync();
+
             return lista;
         }
         public async Task<Caso?> GetByNumeroExpediente(int NumeroExpediente)

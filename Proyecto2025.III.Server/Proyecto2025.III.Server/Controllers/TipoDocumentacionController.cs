@@ -16,7 +16,7 @@ namespace Proyecto2025.Server.Controllers
             this.repositorio = repositorio;
         }
 
-        [HttpGet]
+        [HttpGet("lista")]
         public async Task<ActionResult<List<TipoDocumentacionListadoDTO>>> ListaTipoDocumentacion()
         {
             var lista = await repositorio.SelectListaTipoDocumentacion();

@@ -31,22 +31,31 @@ namespace Proyecto2025.Server.Controllers
         }
 
         // GET: api/documentacion/lista
+        //[HttpGet("lista")]
+        //public async Task<ActionResult<List<DocumentacionListadoDTO>>> ListaDocumentacion()
+        //{
+        //    var lista = await repositorio.SelectListaDocumentacion();
+
+        //    if (lista == null)
+        //    {
+        //        return NotFound("No se encontro elementos de la lista, VERIFICAR.");
+        //    }
+        //    if (lista.Count == 0)
+        //    {
+        //        return NotFound("Lista sin registros.");
+        //    }
+
+        //    return Ok(lista);
+        //}
+
         [HttpGet("lista")]
         public async Task<ActionResult<List<DocumentacionListadoDTO>>> ListaDocumentacion()
         {
             var lista = await repositorio.SelectListaDocumentacion();
 
-            if (lista == null)
-            {
-                return NotFound("No se encontro elementos de la lista, VERIFICAR.");
-            }
-            if (lista.Count == 0)
-            {
-                return NotFound("Lista sin registros.");
-            }
-
             return Ok(lista);
         }
+
 
         // GET: api/documentacion/5
         [HttpGet("{id:int}")]
