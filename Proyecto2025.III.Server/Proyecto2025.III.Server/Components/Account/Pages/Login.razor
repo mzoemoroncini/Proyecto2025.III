@@ -13,160 +13,150 @@
 
 <PageTitle>Iniciar Sesión</PageTitle>
 
-<h1>Iniciar sesión</h1>
+<div class="login-page">
 
-<div class="row">
+    <div class="login-wrapper">
 
-    <div class="col-lg-6">
+        <div class="login-left">
 
-        <section>
+            <img src="/images/logo-ahumada.png"
+                 class="logo-login" />
 
-            <StatusMessage Message="@errorMessage" />
+            <h1 class="login-title">
+                Bienvenido
+            </h1>
 
-            <EditForm EditContext="editContext"
-                      method="post"
-                      OnSubmit="LoginUser"
-                      FormName="login">
+            <p class="login-subtitle">
 
-                <DataAnnotationsValidator />
+                Accedé al sistema jurídico y administrá
+                expedientes, documentación y casos
+                de forma moderna y segura.
 
-                <h2>Usa una cuenta local para iniciar sesión.</h2>
+            </p>
 
-                <hr />
+        </div>
 
-                <ValidationSummary class="text-danger" role="alert" />
+        <div class="login-card">
 
-                <div class="form-floating mb-3">
+            <section>
 
-                    <InputText @bind-Value="Input.Email"
-                               id="Input.Email"
-                               class="form-control"
-                               autocomplete="username webauthn"
-                               aria-required="true"
-                               placeholder="nombre@ejemplo.com" />
+                <StatusMessage Message="@errorMessage" />
 
-                    <label for="Input.Email" class="form-label">
-                        Correo electrónico
-                    </label>
+                <EditForm EditContext="editContext"
+                          method="post"
+                          OnSubmit="LoginUser"
+                          FormName="login">
 
-                    <ValidationMessage For="() => Input.Email"
-                                       class="text-danger" />
+                    <DataAnnotationsValidator />
 
-                </div>
+                    <h2 class="form-title">
+                        Iniciar Sesión
+                    </h2>
 
-                <div class="form-floating mb-3">
+                    <ValidationSummary class="text-danger"
+                                       role="alert" />
 
-                    <InputText type="password"
-                               @bind-Value="Input.Password"
-                               id="Input.Password"
-                               class="form-control"
-                               autocomplete="current-password"
-                               aria-required="true"
-                               placeholder="Contraseña" />
+                    <div class="input-container">
 
-                    <label for="Input.Password" class="form-label">
-                        Contraseña
-                    </label>
+                        <InputText @bind-Value="Input.Email"
+                                   id="Input.Email"
+                                   class="input-modern"
+                                   autocomplete="username webauthn"
+                                   aria-required="true"
+                                   placeholder="Correo electrónico" />
 
-                    <ValidationMessage For="() => Input.Password"
-                                       class="text-danger" />
+                        <ValidationMessage For="() => Input.Email"
+                                           class="text-danger" />
 
-                </div>
+                    </div>
 
-                <div class="checkbox mb-3">
+                    <div class="input-container">
 
-                    <label class="form-label">
+                        <InputText type="password"
+                                   @bind-Value="Input.Password"
+                                   id="Input.Password"
+                                   class="input-modern"
+                                   autocomplete="current-password"
+                                   aria-required="true"
+                                   placeholder="Contraseña" />
 
-                        <InputCheckbox @bind-Value="Input.RememberMe"
-                                       class="darker-border-checkbox form-check-input" />
+                        <ValidationMessage For="() => Input.Password"
+                                           class="text-danger" />
 
-                        Recordarme
+                    </div>
 
-                    </label>
+                    <div class="remember-box">
 
-                </div>
+                        <label>
 
-                <div>
+                            <InputCheckbox @bind-Value="Input.RememberMe" />
+
+                            Recordarme
+
+                        </label>
+
+                    </div>
 
                     <button type="submit"
-                            class="w-100 btn btn-lg btn-primary">
+                            class="login-btn">
 
-                        Iniciar sesión
+                        Ingresar
 
                     </button>
 
-                </div>
+                    <hr class="separator" />
 
-                <hr />
+                    <div class="passkey-section">
 
-                <div class="d-flex flex-column">
+                        <span class="or-text">
+                            O
+                        </span>
 
-                    <span class="text-secondary mx-auto mt-2">
-                        O
-                    </span>
+                        <PasskeySubmit Operation="PasskeyOperation.Request"
+                                       Name="Input.Passkey"
+                                       EmailName="Input.Email"
+                                       class="passkey-btn">
 
-                    <PasskeySubmit Operation="PasskeyOperation.Request"
-                                   Name="Input.Passkey"
-                                   EmailName="Input.Email"
-                                   class="btn btn-link mx-auto">
+                            Ingresar con Passkey
 
-                        Ingresar con Passkey
+                        </PasskeySubmit>
 
-                    </PasskeySubmit>
+                    </div>
 
-                </div>
+                    <div class="login-links">
 
-                <hr />
-
-                <div>
-
-                    <p>
                         <a href="Account/ForgotPassword">
                             ¿Olvidaste tu contraseña?
                         </a>
-                    </p>
 
-                    <p>
                         <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">
 
-                            Crear una cuenta nueva
+                            Crear una cuenta
 
                         </a>
-                    </p>
 
-                    <p>
                         <a href="Account/ResendEmailConfirmation">
 
                             Reenviar confirmación de correo
 
                         </a>
-                    </p>
 
-                </div>
+                    </div>
 
-            </EditForm>
+                </EditForm>
 
-        </section>
+            </section>
 
-    </div>
-
-    <div class="col-lg-4 col-lg-offset-2">
-
-        <section>
-
-            <h3>Usar otro servicio para iniciar sesión.</h3>
-
-            <hr />
-
-            <ExternalLoginPicker />
-
-        </section>
+        </div>
 
     </div>
 
 </div>
+
 @code {
+
     private string? errorMessage;
+
     private EditContext editContext = default!;
 
     [CascadingParameter]
@@ -186,8 +176,8 @@
 
         if (HttpMethods.IsGet(HttpContext.Request.Method))
         {
-            // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await HttpContext.SignOutAsync(
+                IdentityConstants.ExternalScheme);
         }
     }
 
@@ -200,43 +190,55 @@
         }
 
         SignInResult result;
+
         if (!string.IsNullOrEmpty(Input.Passkey?.CredentialJson))
         {
-            // When performing passkey sign-in, don't perform form validation.
-            result = await SignInManager.PasskeySignInAsync(Input.Passkey.CredentialJson);
+            result = await SignInManager.PasskeySignInAsync(
+                Input.Passkey.CredentialJson);
         }
         else
         {
-            // If doing a password sign-in, validate the form.
             if (!editContext.Validate())
             {
                 return;
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-            result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            result = await SignInManager.PasswordSignInAsync(
+                Input.Email,
+                Input.Password,
+                Input.RememberMe,
+                lockoutOnFailure: false);
         }
 
         if (result.Succeeded)
         {
-            Logger.LogInformation("User logged in.");
+            Logger.LogInformation(
+                "Usuario inició sesión.");
+
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.RequiresTwoFactor)
         {
             RedirectManager.RedirectTo(
                 "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+                new()
+                {
+                    ["returnUrl"] = ReturnUrl,
+                    ["rememberMe"] = Input.RememberMe
+                });
         }
         else if (result.IsLockedOut)
         {
-            Logger.LogWarning("User account locked out.");
-            RedirectManager.RedirectTo("Account/Lockout");
+            Logger.LogWarning(
+                "Usuario bloqueado.");
+
+            RedirectManager.RedirectTo(
+                "Account/Lockout");
         }
         else
         {
-            errorMessage = "Error: Invalid login attempt.";
+            errorMessage =
+                "Correo o contraseña incorrectos.";
         }
     }
 
@@ -244,13 +246,16 @@
     {
         [Required]
         [EmailAddress]
+
         public string Email { get; set; } = "";
 
         [Required]
         [DataType(DataType.Password)]
+
         public string Password { get; set; } = "";
 
         [Display(Name = "Remember me?")]
+
         public bool RememberMe { get; set; }
 
         public PasskeyInputModel? Passkey { get; set; }
