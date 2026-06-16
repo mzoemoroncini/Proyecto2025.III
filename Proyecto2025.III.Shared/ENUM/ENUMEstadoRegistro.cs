@@ -14,4 +14,11 @@ namespace Proyecto2025.III.Shared.ENUM
         EnGrabacion = 4
 
     }
+    public enum ResultadoOperacionSeguridad
+    {
+        Exitoso = 1,
+        Fallido = 2,
+        NoEncontrado = 3,
+        SinPermiso = 4
+    }
 }

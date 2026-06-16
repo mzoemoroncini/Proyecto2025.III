@@ -1,8 +1,11 @@
-﻿using Proyecto2025.III.BD.Datos;
-using Proyecto2025.III.Repositorio.Repositorios;
-using Proyecto2025.III.BD.Datos.Entity;
-using Proyecto2025.III.Shared.DTO;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
+using Proyecto2025.III.BD.Datos;
+using Proyecto2025.III.BD.Datos.Entity;
+using Proyecto2025.III.Repositorio.Repositorios;
+using Proyecto2025.III.Shared.CONSTANTES;
+using Proyecto2025.III.Shared.DTO;
 using Proyecto2025.III.Shared.ENUM;
 
 namespace Proyecto2025.Server.Controllers
@@ -12,10 +15,15 @@ namespace Proyecto2025.Server.Controllers
     public class CasoController : ControllerBase
     {
         private readonly ICasoRepositorio repositorio;
+        private readonly IOutputCacheStore outputCacheStore;
 
-        public CasoController(ICasoRepositorio repositorio)
+        private const string cacheKey = "CasoCache";
+
+        public CasoController(ICasoRepositorio repositorio,
+                              IOutputCacheStore outputCacheStore)
         {
             this.repositorio = repositorio;
+            this.outputCacheStore = outputCacheStore;
         }
 
         // GET: api/caso
@@ -28,7 +36,6 @@ namespace Proyecto2025.Server.Controllers
             {
                 return NotFound("No se encontraron registros.");
             }
-
 
             return Ok(lista);
         }
@@ -61,16 +68,22 @@ namespace Proyecto2025.Server.Controllers
             return Ok(entidad);
         }
 
-        // GET: api/caso/listacaso
+        // GET: api/caso/lista
         [HttpGet("lista")]
+        [AllowAnonymous]
+        [OutputCache(Tags = new[] { cacheKey })]
         public async Task<ActionResult<List<CasoListadoDTO>>> ListaCaso()
         {
+            Response.Headers["Cache-Control"] =
+                $"public,max-age={ConstantesGlobales.DuracionCacheEnSegundos}";
+
             var lista = await repositorio.SelectListaCaso();
 
             if (lista == null)
             {
                 return NotFound("No se encontro elementos de la lista, VERIFICAR.");
             }
+
             if (lista.Count == 0)
             {
                 return NotFound("Lista sin registros.");
@@ -96,6 +109,8 @@ namespace Proyecto2025.Server.Controllers
                 };
 
                 var id = await repositorio.Insert(entidad);
+
+                await outputCacheStore.EvictByTagAsync(cacheKey, default);
 
                 return Ok(id);
             }
@@ -125,6 +140,8 @@ namespace Proyecto2025.Server.Controllers
                 return BadRequest("Datos no válidos o el registro no existe.");
             }
 
+            await outputCacheStore.EvictByTagAsync(cacheKey, default);
+
             return Ok();
         }
 
@@ -138,6 +155,8 @@ namespace Proyecto2025.Server.Controllers
             {
                 return NotFound($"No existe el registro con el id: {id} o ya fue eliminado.");
             }
+
+            await outputCacheStore.EvictByTagAsync(cacheKey, default);
 
             return Ok($"Registro con el id: {id} eliminado correctamente.");
         }

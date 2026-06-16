@@ -8,8 +8,18 @@ using Proyecto2025.III.Server.Client.Pages;
 using Proyecto2025.III.Server.Components;
 using Proyecto2025.III.Server.Components.Account;
 using Proyecto2025.III.Servicio.ServiciosHttp;
+using Proyecto2025.III.Shared.CONSTANTES;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+// Cache
+var duracionCache = ConstantesGlobales.DuracionCacheEnSegundos;
+
+builder.Services.AddOutputCache(op =>
+{
+    op.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(ConstantesGlobales.DuracionCacheEnSegundos);
+});
 
 builder.Services.AddScoped(sp =>
     new HttpClient { BaseAddress = new Uri("https://localhost:7242/") });
@@ -49,7 +59,7 @@ builder.Services.AddDbContext<AppDBContext>(options =>
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
+    options.SignIn.RequireConfirmedAccount = false;
     options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
 })
 .AddEntityFrameworkStores<AppDBContext>()
@@ -97,6 +107,7 @@ app.MapRazorComponents<App>()
 app.MapAdditionalIdentityEndpoints();
 
 // Controllers (API)
+app.UseOutputCache();
 app.MapControllers();
 
 app.Run();
